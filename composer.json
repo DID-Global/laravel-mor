@@ -1,7 +1,7 @@
 {
-    "name": "blob/laravel-morinc",
-    "description": "A simple Laravel interface for interacting with the morinc API.",
-    "keywords": ["laravel", "morinc", "api"],
+    "name": "blob/laravel-mor",
+    "description": "A simple Laravel interface for interacting with the mor API.",
+    "keywords": ["laravel", "mor", "api"],
     "license": "MIT",
     "authors": [
         {
@@ -15,7 +15,7 @@
     },
     "autoload": {
         "psr-4": {
-            "WHMCS\\": "src/"
+            "MOR\\": "src/"
         }
     },
     "minimum-stability": "dev"

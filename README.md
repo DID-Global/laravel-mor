@@ -1,4 +1,4 @@
-laravel-morinc
+laravel-mor
 ======
 
 **NOTE:** This package is no longer in active development. Feel free to fork and extend it as needed.
@@ -12,7 +12,7 @@ To install the package, simply add the following to your Laravel installation's 
 ```json
 "require": {
 	"laravel/framework": "5.*",
-	"blob/laravel-morinc": "dev-master"
+	"blob/laravel-mor": "dev-master"
 },
 ```
 
@@ -23,7 +23,7 @@ Then, add the following **Service Provider** to your `providers` array in your `
 ```php
 'providers' => array(
 	...
-	MORINC\MORINCServiceProvider::class
+	MOR\MORServiceProvider::class
 );
 ```
 
@@ -36,34 +36,24 @@ Open `config/morinc.php` and configure the api endpoint and credentials:
 
 ```php
 return [
-	// API URL
-	'url'		=>	'http://url.com/whmcs/includes/api.php',
+    // API URL
+    'url'		=>	'https://mor.url.com',
 
-	// API USERNAME
-	'username'	=>	'admin_user',
+    // API USERNAME
+    'username'	=>	'admin_user',
 
-	// API PASSWORD
-	'password'	=>	'password123',
+    // API PASSWORD
+    'password'	=>	'password123',
 
-    // API PASSWORD HASHED
-    'hashed_password' => false,
+    // API PROCESSOR
+    'processor' =>	'api2016.php',
 
-	// API RESPONSE TYPE
-	'response_type'	=> 'json', // json or xml
+    // API USERNAME
+    'timezone'	=>	'UTC',
 ];
 ```
 
 # Usage
 ```php
-// app/Http/routes.php
-
-Route::get('/products/{client_id}', function() {
-
-    $start = 0;
-    $limit = 25;
-
-    $products = WHMCS::getClientProducts($client_id, $start, $limit);
-
-    return json_encode($products);
-});
+$DIDs = MOR::getDIDs($client_id);
 ```

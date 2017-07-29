@@ -1,15 +1,15 @@
 <?php 
 
-namespace MORINC\Facades;
+namespace MOR\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
-class MORINC extends Facade {
+class MOR extends Facade {
 
 	/**
 	 * Get the registered name of the component
 	 *
 	 * @return string
 	 */
-	protected static function getFacadeAccessor() { return 'morinc'; }
+	protected static function getFacadeAccessor() { return 'mor'; }
 }

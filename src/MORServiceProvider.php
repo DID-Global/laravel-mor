@@ -1,10 +1,10 @@
 <?php
 
-namespace MORINC;
+namespace MOR;
 
 use Illuminate\Support\ServiceProvider;
 
-class MORINCServiceProvider extends ServiceProvider {
+class MORServiceProvider extends ServiceProvider {
 
 	/**
 	 * Indicates if loading of the provider is deferred.
@@ -30,17 +30,17 @@ class MORINCServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		$this->app->bind('morinc', function($app) {
-		    return new MORINC;
+		$this->app->bind('mor', function($app) {
+		    return new MOR;
 		});
 
 		$this->app->booting(function() {
 			$loader = \Illuminate\Foundation\AliasLoader::getInstance();
-			$loader->alias('MORINC', 'MORINC\Facades\MORINC');
+			$loader->alias('MOR', 'MOR\Facades\MOR');
 		});
 
 		$this->publishes([
-			dirname(__FILE__).'/config/morinc.php' => config_path('morinc.php')
+			dirname(__FILE__).'/config/mor.php' => config_path('mor.php')
 		]);
 	}
 
@@ -51,7 +51,7 @@ class MORINCServiceProvider extends ServiceProvider {
 	 */
 	public function provides()
 	{
-		return array('morinc');
+		return array('mor');
 	}
 
 }
