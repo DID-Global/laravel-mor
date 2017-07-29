@@ -1,0 +1,22 @@
+{
+    "name": "blob/laravel-morinc",
+    "description": "A simple Laravel interface for interacting with the morinc API.",
+    "keywords": ["laravel", "morinc", "api"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Bloby"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.9",
+        "guzzlehttp/guzzle": "~6.0",
+        "nesbot/carbon": "~1.21"
+    },
+    "autoload": {
+        "psr-4": {
+            "WHMCS\\": "src/"
+        }
+    },
+    "minimum-stability": "dev"
+}
