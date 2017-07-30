@@ -62,8 +62,10 @@ class MOR extends MorCore {
     }
 
     /**
+     * True if blocked
+     *
      * @param $client_id
-     * @return string
+     * @return bool
      */
     public function checkBlocked($client_id)
     {
@@ -73,7 +75,7 @@ class MOR extends MorCore {
             'client_id' => $client_id,
         ];
 
-        return $this->submitRequest($data);
+        return (int)$this->submitRequest($data) === 1;
     }
 
     /**

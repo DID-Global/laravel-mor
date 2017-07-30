@@ -1,14 +1,21 @@
-<?php 
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Exia
+ * Date: 31.07.2017
+ * Time: 0:45
+ */
 
-namespace MOR\Facades;
+namespace MOR;
 
-use Illuminate\Support\Facades\Facade;
 
 /**
+ * Class test
+ * @package MOR
  * @method static string checkDID($did, $client_id)
  * @method static string getServiceSetup($price1, $price2)
  * @method static string getDIDs($client_id)
- * @method static bool checkBlocked($client_id)
+ * @method static string checkBlocked($client_id)
  * @method static string getID($client_id)
  * @method static string getDevice($client_id)
  * @method static string getBalance($client_id)
@@ -30,12 +37,7 @@ use Illuminate\Support\Facades\Facade;
  * @see \MOR\MorCore
  * @see \MOR\Facades\MOR
  */
-class MOR extends Facade {
-
-	/**
-	 * Get the registered name of the component
-	 *
-	 * @return string
-	 */
-	protected static function getFacadeAccessor() { return 'mor'; }
+class test extends MOR
+{
+    //public
 }
