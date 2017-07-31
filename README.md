@@ -23,7 +23,7 @@ Then, add the following **Service Provider** to your `providers` array in your `
 ```php
 'providers' => array(
 	...
-	MOR\MORServiceProvider::class
+	MOR\Provider\MORServiceProvider::class
 );
 ```
 
