@@ -1,6 +1,6 @@
 <?php
 
-namespace MOR\Provider;
+namespace MOR\Providers;
 
 use Illuminate\Support\ServiceProvider;
 
