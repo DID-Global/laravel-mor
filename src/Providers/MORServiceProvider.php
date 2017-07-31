@@ -31,7 +31,7 @@ class MORServiceProvider extends ServiceProvider {
 	public function register()
 	{
 		$this->app->bind('mor', function($app) {
-		    return new MOR;
+		    return new \MOR\MOR;
 		});
 
 		$this->app->booting(function() {
