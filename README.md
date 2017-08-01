@@ -32,7 +32,7 @@ From the command-line run:
 
 # Configuration
 
-Open `config/morinc.php` and configure the api endpoint and credentials:
+Open `config/mor.php` and configure the api endpoint and credentials:
 
 ```php
 return [
