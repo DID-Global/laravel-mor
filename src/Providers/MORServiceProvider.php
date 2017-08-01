@@ -39,9 +39,12 @@ class MORServiceProvider extends ServiceProvider {
 			$loader->alias('MOR', 'MOR\Facades\MOR');
 		});
 
-		$this->publishes([
-			dirname(__FILE__).'/config/mor.php' => config_path('mor.php')
-		]);
+        $configPath = config_path('mor.php');
+        if (!\Illuminate\Support\Facades\File::exists($configPath)) {
+            $this->publishes([
+                __DIR__ . '/../config/mor.php' => $configPath
+            ]);
+        }
 	}
 
 	/**
