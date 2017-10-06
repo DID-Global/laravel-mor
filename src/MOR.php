@@ -338,6 +338,8 @@ class MOR extends MorCore {
         $c = curl_init($host);
         $headers = [];
         $opts = [
+            CURLOPT_SSL_VERIFYHOST => false,
+            CURLOPT_SSL_VERIFYPEER => false,
             CURLOPT_RETURNTRANSFER => true, // Allows for the return of a curl handle
             CURLOPT_TIMEOUT => 30, // Maximum number of seconds to allow curl to process the entire request
             CURLOPT_CONNECTTIMEOUT => 5, // Maximm number of seconds to establish a connection, shouldn't take 5 seconds
