@@ -2,8 +2,8 @@
 
 namespace MOR;
 
-class MOR extends MorCore {
-    
+class MOR extends MorCore
+{
     /**
      * Instantiate a new instance
      */
@@ -297,6 +297,17 @@ class MOR extends MorCore {
             'subscription_memo' => $memo, 'subscription_until_canceled' => 1
         ];
         $rez = $this->morRequest('/api/subscription_create', $params, true, ['service_id', 'user_id']);
+        return $rez;
+    }
+
+    /**
+     * @param $dids_id
+     * @return mixed
+     */
+    public function didTerminate($dids_id)
+    {
+        $params = ['dids_id' => $dids_id];
+        $rez = $this->morRequest('/api/did_terminate', $params, true, ['dids_id']);
         return $rez;
     }
 

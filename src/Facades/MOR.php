@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static string addDID($client_id, $did, $provider, $setup, $monthly, $rate)
  * @method static string createSubscription($client_id, $service_id, $memo)
  * @method static string createSubscriptionMonth($client_id, $service_id, $memo)
+ * @method static string didTerminate($dids_id)
  * @method static string morRequest($host, $data = [], $useHash = true, $hashKeys)
  * @method static string sendRequest($data, $host = false)
  *
@@ -30,8 +31,8 @@ use Illuminate\Support\Facades\Facade;
  * @see \MOR\MorCore
  * @see \MOR\Facades\MOR
  */
-class MOR extends Facade {
-
+class MOR extends Facade
+{
 	/**
 	 * Get the registered name of the component
 	 *
