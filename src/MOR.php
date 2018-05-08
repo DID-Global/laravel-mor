@@ -306,13 +306,9 @@ class MOR extends MorCore
      */
     public function didTerminate($dids_id)
     {
-        $data = [
-            'cmd'       => 'did_terminate',
-            'auth'      => $this->getDatum(),
-            'dids_id' => $dids_id,
-        ];
-
-        return $this->submitRequest($data);
+        $params = ['dids_id' => $dids_id];
+        $rez = $this->morRequest('/api/did_terminate', $params, true, ['dids_id']);
+        return $rez;
     }
 
     /**
