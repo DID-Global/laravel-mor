@@ -301,21 +301,17 @@ class MOR extends MorCore
     }
 
     /**
-     * @param $client_id
      * @param $did
      * @return array
      */
-    public function didTerminate($client_id, $did)
+    public function didTerminate($did)
     {
         $response = $this->unassignDID($did);
-
-        $user_id = $this->getID($client_id);
 
         $data = [
             'cmd'       => 'did_terminate',
             'auth'      => $this->getDatum(),
             'did'       => $did,
-            'user_id'   => $user_id,
         ];
 
         $responseT = $this->submitRequest($data);
