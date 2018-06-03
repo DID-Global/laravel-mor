@@ -323,21 +323,49 @@ class MOR extends MorCore
     }
 
     /**
+     * @param int|string $user_id
+     * @return mixed
+     */
+    public function getUserDetails($user_id)
+    {
+        $params = [];
+        $params[is_numeric($user_id) ? 'user_id' : 'username'] = $user_id;
+
+        $rez = $this->morRequest('/api/user_details', $params, true, [is_numeric($user_id) ? 'user_id' : 'username']);
+        return $rez;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getUsers()
+    {
+        $rez = $this->morRequest('/api/users_get', [], true);
+        return $rez;
+    }
+
+    /**
      * @param $host
      * @param array $data
      * @param bool $useHash
-     * @param $hashKeys
+     * @param array $hashKeys
      * @return mixed
      */
-    public function morRequest($host, $data = [], $useHash = true, $hashKeys)
+    public function morRequest($host, $data = [], $useHash = true, $hashKeys = [])
     {
         $req = $data;
         if ($useHash) {
             $hash_string = '';
-            foreach ($hashKeys as $val) {
-                if (in_array($val, array_keys($data))) {
-                    $hash_string.= $data[$val];
+            if (!empty($data)) {
+                foreach ($hashKeys as $val) {
+                    if (in_array($val, array_keys($data))) {
+                        $hash_string .= $data[$val];
+                    }
                 }
+            }
+            else {
+                $hash_string .= $this->username;
+                $hash_string .= $this->password;
             }
             $hash_string.= 'mcEprBPytUFv'; // @param API authkey
             $hash = sha1($hash_string);

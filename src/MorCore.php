@@ -5,8 +5,8 @@ namespace MOR;
 use GuzzleHttp\Client;
 use Carbon\Carbon;
 
-class MorCore {
-        
+class MorCore
+{
     /**
      * @var \GuzzleHttp\Client
      */

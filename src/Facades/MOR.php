@@ -26,6 +26,8 @@ use Illuminate\Support\Facades\Facade;
  * @method static string didTerminate($did)
  * @method static string morRequest($host, $data = [], $useHash = true, $hashKeys)
  * @method static string sendRequest($data, $host = false)
+ * @method static string getUserDetails($user_id)
+ * @method static string getUsers()
  *
  * @see \MOR\MOR
  * @see \MOR\MorCore
