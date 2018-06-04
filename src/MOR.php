@@ -360,6 +360,21 @@ class MOR extends MorCore
     }
 
     /**
+     * @return mixed
+     */
+    public function getListWHMCSUsersIDs()
+    {
+        $data = [
+            'cmd'       => 'get_list_users_whmcs_ids',
+            'auth'      => $this->getDatum(),
+        ];
+
+        $response = $this->submitRequest($data);
+
+        return json_decode($response, true);
+    }
+
+    /**
      * @param $host
      * @param array $data
      * @param bool $useHash

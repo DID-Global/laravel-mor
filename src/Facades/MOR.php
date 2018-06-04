@@ -29,6 +29,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static string getUserDetails($user_id)
  * @method static string getUsers()
  * @method static string getListEmails()
+ * @method static string getListWHMCSUsersIDs()
  *
  * @see \MOR\MOR
  * @see \MOR\MorCore
