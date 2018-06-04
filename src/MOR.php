@@ -345,6 +345,21 @@ class MOR extends MorCore
     }
 
     /**
+     * @return mixed
+     */
+    public function getListEmails()
+    {
+        $data = [
+            'cmd'       => 'get_list_emails',
+            'auth'      => $this->getDatum(),
+        ];
+
+        $response = $this->submitRequest($data);
+
+        return json_decode($response, true);
+    }
+
+    /**
      * @param $host
      * @param array $data
      * @param bool $useHash

@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static string sendRequest($data, $host = false)
  * @method static string getUserDetails($user_id)
  * @method static string getUsers()
+ * @method static string getListEmails()
  *
  * @see \MOR\MOR
  * @see \MOR\MorCore
