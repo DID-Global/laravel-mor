@@ -2,7 +2,7 @@
 
 namespace MOR;
 
-use ExtPHP\XmlToJson\XmlToJsonConverter;
+use Mtownsend\XmlToArray\XmlToArray;
 
 class MOR extends MorCore
 {
@@ -160,10 +160,10 @@ class MOR extends MorCore
      */
     protected function parseMorResponse(string $response)
     {
-        $result = $this->convertXmlToJson($response);
-        $this->removeValueKey($result);
+        // $result = $this->convertXmlToJson($response);
+        // $this->removeValueKey($result);
 
-        return $result;
+        return XmlToArray::convert($response);
     }
 
     /**
@@ -180,16 +180,6 @@ class MOR extends MorCore
                 $value = $value['_value'];
             }
         }
-    }
-
-    /**
-     * @param string $xml
-     * @return array
-     */
-    protected function convertXmlToJson(string $xml)
-    {
-        $converter = new XmlToJsonConverter(simplexml_load_string($xml));
-        return $converter->toArray();
     }
 
     /**
