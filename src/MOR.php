@@ -412,7 +412,7 @@ class MOR extends MorCore
         $req['p'] = $this->password; // @param password
         $reqHost = sprintf('%s/billing%s', $this->api_url, $host); // @param MOR hostname
         $response = $this->sendRequest($req, $reqHost);
-        $result = new XmlToJsonConverter($response);
+        $result = new XmlToJsonConverter(simplexml_load_string($response));
 
         return $result->toJson();
     }
