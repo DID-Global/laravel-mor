@@ -381,69 +381,157 @@ class MOR extends MorCore
     }
 
     /**
-     * @param $host
+     * @param string $host
      * @param array $data
      * @param bool $useHash
      * @param array $hashKeys
+     * @param string|null $username
+     * @param string|null $password
      * @return mixed
      */
-    public function morRequest($host, $data = [], $useHash = true, $hashKeys = [])
+    public function morRequest($host, $data = [], $useHash = true, $hashKeys = [], $username = null, $password = null)
     {
-        $req = $data;
-        if ($useHash) {
-            $hash_string = '';
-
-            if (!empty($data)) {
-                foreach ($hashKeys as $val) {
-                    if (in_array($val, array_keys($data))) {
-                        $hash_string .= $data[$val];
-                    }
-                }
-            } else {
-                $hash_string .= $this->username;
-                $hash_string .= $this->password;
-            }
-
-            $hash_string .= $this->api_secret_key; // @param API authkey
-            $hash = sha1($hash_string);
-            $req['hash'] = $hash;
-        }
-        $req['u'] = $this->username; // @param user name
-        $req['p'] = $this->password; // @param password
-        $reqHost = sprintf('%s/billing%s', $this->api_url, $host); // @param MOR hostname
+        $req = $this->buildRequestData($data, $useHash, $hashKeys, $username, $password);
+        $reqHost = sprintf('%s/billing%s', $this->api_url, $host);
         $response = $this->sendRequest($req, $reqHost);
-        $result = new XmlToJsonConverter(simplexml_load_string($response));
 
-        return $result->toJson();
+        return $this->parseMorResponse($response);
     }
 
     /**
-     * @param $data
-     * @param bool $host
+     * @param array $data
+     * @param bool $useHash
+     * @param array $hashKeys
+     * @param string|null $username
+     * @param string|null $password
+     * @return array
+     */
+    protected function buildRequestData($data, $useHash, $hashKeys, $username, $password)
+    {
+        $req = $data;
+
+        if ($useHash) {
+            $hash_string = $this->generateHashString($data, $hashKeys, $username, $password);
+            $hash = sha1($hash_string);
+            $req['hash'] = $hash;
+        }
+
+        $req['u'] = $username ?? $this->username;
+        $req['p'] = $password ?? $this->password;
+
+        return $req;
+    }
+
+    /**
+     * @param array $data
+     * @param array $hashKeys
+     * @param string|null $username
+     * @param string|null $password
+     * @return string
+     */
+    protected function generateHashString($data, $hashKeys, $username, $password)
+    {
+        $hash_string = '';
+
+        if (!empty($data)) {
+            foreach ($hashKeys as $val) {
+                if (in_array($val, array_keys($data))) {
+                    $hash_string .= $data[$val];
+                }
+            }
+        } else {
+            $hash_string .= $username ?? $this->username;
+            $hash_string .= $password ?? $this->password;
+        }
+
+        $hash_string .= $this->api_secret_key;
+
+        return $hash_string;
+    }
+
+        /**
+     * @param array $data
+     * @param string|bool $host
      * @return mixed
      */
     public function sendRequest($data, $host = false)
     {
         $c = curl_init($host);
-        $headers = [];
+
         $opts = [
             CURLOPT_SSL_VERIFYHOST => false,
             CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_RETURNTRANSFER => true, // Allows for the return of a curl handle
-            CURLOPT_TIMEOUT => 30, // Maximum number of seconds to allow curl to process the entire request
-            CURLOPT_CONNECTTIMEOUT => 5, // Maximm number of seconds to establish a connection, shouldn't take 5 seconds
-            CURLOPT_FOLLOWLOCATION => true, // Incase there's a redirect in place (moved zabbix url), follow it automatically
-            CURLOPT_FRESH_CONNECT => true // Ensures we don't use a cached connection or response
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_CONNECTTIMEOUT => 5,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_FRESH_CONNECT => true,
         ];
-        if (is_array($headers) && count($headers)) {
+
+        $headers = $this->getRequestHeaders();
+
+        if (!empty($headers)) {
             $opts[CURLOPT_HTTPHEADER] = $headers;
         }
+
         $opts[CURLOPT_POSTFIELDS] = $data;
         $opts[CURLOPT_ENCODING] = 'gzip';
+
         curl_setopt_array($c, $opts);
+
         $ret = @curl_exec($c);
+        if ($ret === false) {
+            throw new \RuntimeException('cURL request failed: ' . curl_error($c));
+        }
+
         curl_close($c);
 
         return $ret;
+    }
+
+    /**
+     * @param string $response
+     * @return array
+     */
+    protected function parseMorResponse(string $response)
+    {
+        $result = $this->convertXmlToJson($response);
+        $this->removeValueKey($result);
+
+        return $result;
+    }
+
+    /**
+     * @param array $array
+     */
+    protected function removeValueKey(array &$array)
+    {
+        foreach ($array as $key => &$value) {
+            if (is_array($value)) {
+                $this->removeValueKey($value);
+            }
+
+            if (is_array($value) && array_key_exists('_value', $value)) {
+                $value = $value['_value'];
+            }
+        }
+    }
+
+    /**
+     * @param string $xml
+     * @return array
+     */
+    protected function convertXmlToJson(string $xml)
+    {
+        $converter = new XmlToJsonConverter(simplexml_load_string($xml));
+        return $converter->toArray();
+    }
+
+    /**
+     * @return array
+     */
+    protected function getRequestHeaders()
+    {
+        return [];
     }
 }
