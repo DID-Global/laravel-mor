@@ -75,7 +75,7 @@ class MOR extends MorCore
             'client_id' => $client_id,
         ];
 
-        return (int)$this->submitRequest($data) === 1;
+        return (int) $this->submitRequest($data) === 1;
     }
 
     /**
@@ -159,7 +159,8 @@ class MOR extends MorCore
      * @param $user_id
      * @return mixed
      */
-    public function getDevices($user_id) {
+    public function getDevices($user_id)
+    {
         $params = ['user_id' => $user_id];
         $rez = $this->morRequest('/api/devices_get', $params, true, ['user_id']);
         return $rez;
@@ -170,7 +171,8 @@ class MOR extends MorCore
      * @param $device_id
      * @return mixed
      */
-    public function assignDID($did,$device_id){
+    public function assignDID($did, $device_id)
+    {
         $params = ['device_id' => $device_id, 'did' => $did];
         $rez = $this->morRequest('/api/did_device_assign', $params, true, ['device_id','did']);
         return $rez;
@@ -180,7 +182,8 @@ class MOR extends MorCore
      * @param $did
      * @return mixed
      */
-    public function unassignDID($did){
+    public function unassignDID($did)
+    {
         $params = ['did' => $did];
         $rez = $this->morRequest('/api/did_device_unassign', $params, true, ['did']);
         return $rez;
@@ -199,7 +202,8 @@ class MOR extends MorCore
      * @param $client_id
      * @return mixed
      */
-    function userRegister($email, $id, $device_type, $username, $first_name, $last_name, $password, $password2, $country_id, $client_id) {
+    public function userRegister($email, $id, $device_type, $username, $first_name, $last_name, $password, $password2, $country_id, $client_id)
+    {
         $params = [
             'email' => $email, 'id' => $id, 'device_type' => $device_type, 'username' => $username,
             'first_name' => $first_name, 'last_name' => $last_name, 'password' => $password,
@@ -218,7 +222,7 @@ class MOR extends MorCore
     public function paymentCreate($client_id, $amount, $transaction_id)
     {
         $user_id = $this->getID($client_id);
-        if ((int)$user_id === 0) {
+        if ((int) $user_id === 0) {
             return 'error';
         }
         $params = ['user_id' => $user_id, 'p_currency' => 'USD', 'amount' => $amount, 'transaction' => $transaction_id];
@@ -392,12 +396,11 @@ class MOR extends MorCore
                         $hash_string .= $data[$val];
                     }
                 }
-            }
-            else {
+            } else {
                 $hash_string .= $this->username;
                 $hash_string .= $this->password;
             }
-            $hash_string.= 'mcEprBPytUFv'; // @param API authkey
+            $hash_string .= $this->api_secret_key; // @param API authkey
             $hash = sha1($hash_string);
             $req['hash'] = $hash;
         }

@@ -20,6 +20,11 @@ class MorCore
     /**
      * @var string
      */
+    protected $api_secret_key;
+
+    /**
+     * @var string
+     */
     protected $processor;
 
     /**
@@ -48,6 +53,7 @@ class MorCore
     public function __construct()
     {
         $this->api_url          = config('mor.url');
+        $this->api_secret_key   = config('mor.secret_key');
         $this->processor        = config('mor.processor');
         $this->timezone         = config('mor.timezone');
         $this->username         = config('mor.username');
@@ -62,8 +68,8 @@ class MorCore
 
     /**
      * Respond to a MOR request
-     * 
-     * @param type 
+     *
+     * @param type
      * @return string
      */
     public function submitRequest($data)
@@ -74,12 +80,12 @@ class MorCore
             'verify' => false
         ]);
 
-        return (string)$response->getBody();
+        return (string) $response->getBody();
     }
 
     public function getDate($format = 'YM')
     {
-        return (string)Carbon::now($this->timezone)->format($format);
+        return (string) Carbon::now($this->timezone)->format($format);
     }
 
     /**
@@ -89,5 +95,4 @@ class MorCore
     {
         return sha1($this->getDate('YM') . 'm0nk3ys');
     }
-
 }
