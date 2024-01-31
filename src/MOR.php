@@ -2,6 +2,8 @@
 
 namespace MOR;
 
+use ExtPHP\XmlToJson\XmlToJsonConverter;
+
 class MOR extends MorCore
 {
     /**
@@ -390,6 +392,7 @@ class MOR extends MorCore
         $req = $data;
         if ($useHash) {
             $hash_string = '';
+
             if (!empty($data)) {
                 foreach ($hashKeys as $val) {
                     if (in_array($val, array_keys($data))) {
@@ -400,6 +403,7 @@ class MOR extends MorCore
                 $hash_string .= $this->username;
                 $hash_string .= $this->password;
             }
+
             $hash_string .= $this->api_secret_key; // @param API authkey
             $hash = sha1($hash_string);
             $req['hash'] = $hash;
@@ -407,8 +411,10 @@ class MOR extends MorCore
         $req['u'] = $this->username; // @param user name
         $req['p'] = $this->password; // @param password
         $reqHost = sprintf('%s/billing%s', $this->api_url, $host); // @param MOR hostname
-        $ret = $this->sendRequest($req, $reqHost);
-        return $ret;
+        $response = $this->sendRequest($req, $reqHost);
+        $result = new XmlToJsonConverter($response);
+
+        return $result->toJson();
     }
 
     /**
@@ -437,6 +443,7 @@ class MOR extends MorCore
         curl_setopt_array($c, $opts);
         $ret = @curl_exec($c);
         curl_close($c);
+
         return $ret;
     }
 }
