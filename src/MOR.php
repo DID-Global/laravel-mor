@@ -160,9 +160,6 @@ class MOR extends MorCore
      */
     protected function parseMorResponse(string $response)
     {
-        // $result = $this->convertXmlToJson($response);
-        // $this->removeValueKey($result);
-
         return XmlToArray::convert($response);
     }
 
