@@ -66,7 +66,7 @@ class MorCore
         $this->hash_checking    = config('mor.hash_checking');
 
         $this->client = new Client([
-            'base_uri'  => sprintf('%s/billing/api', rtrim($this->api_url, '/')),
+            'base_uri'  => sprintf('%s/billing/api/', rtrim($this->api_url, '/')),
             'timeout'   => $this->timeout
         ]);
     }

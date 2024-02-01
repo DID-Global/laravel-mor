@@ -21,7 +21,7 @@ class MOR extends MorCore
         $params = [];
         $params[is_numeric($user_id) ? 'user_id' : 'username'] = $user_id;
 
-        $response = $this->submitRequest('/user_details', $params, [is_numeric($user_id) ? 'user_id' : 'username']);
+        $response = $this->submitRequest('user_details', $params, [is_numeric($user_id) ? 'user_id' : 'username']);
         return $response;
     }
 
@@ -30,7 +30,7 @@ class MOR extends MorCore
      */
     public function getUsers()
     {
-        $response = $this->submitRequest('/users_get', [], ['u', 'p']);
+        $response = $this->submitRequest('users_get', [], ['u', 'p']);
         return $response;
     }
 
@@ -39,7 +39,7 @@ class MOR extends MorCore
      */
     public function getDIDs()
     {
-        $response = $this->submitRequest('/dids_get');
+        $response = $this->submitRequest('dids_get');
         return $response;
     }
 }
