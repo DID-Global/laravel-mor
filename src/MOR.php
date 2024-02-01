@@ -16,13 +16,16 @@ class MOR extends MorCore
      * @param int|string $user_id
      * @return mixed
      */
-    public function getUserDetails(int|string $user_id): mixed
+    public function getUserDetails(int|string $userId): mixed
     {
         $params = [];
-        $params[is_numeric($user_id) ? 'user_id' : 'username'] = $user_id;
+        $params[is_numeric($userId) ? 'user_id' : 'username'] = $userId;
 
-        $response = $this->submitRequest('user_details', $params, [is_numeric($user_id) ? 'user_id' : 'username']);
-        return $response;
+        return $this->submitRequest(
+            'user_details',
+            $params,
+            [is_numeric($userId) ? 'user_id' : 'username']
+        );
     }
 
     /**
@@ -30,16 +33,31 @@ class MOR extends MorCore
      */
     public function getUsers(): mixed
     {
-        $response = $this->submitRequest('users_get', [], ['u', 'p']);
-        return $response;
+        return $this->submitRequest('users_get', [], ['u', 'p']);
     }
 
     /**
-     * @return mixed
+     * Retrieve DIDs based on specified parameters.
+     *
+     * @param array $params {
+     *     An associative array of parameters.
+     *
+     *     @var string|null $search_did_number            Search by DID number.
+     *     @var string|null $search_did_owner             Search by DID owner.
+     *     @var string|null $search_dialplan              Search by dialplan.
+     *     @var string|null $search_user                  Search by user ID.
+     *     @var string|null $search_device                Search by device.
+     *     @var string|null $search_provider              Search by provider.
+     *     @var string|null $search_language              Search by language.
+     *     @var int|null    $search_hide_terminated_dids  Hide terminated DIDs if '1'.
+     *     @var int|null    $max_results                  Maximum number of results to retrieve.
+     *     @var string|null $from                         Specify a starting point for the search.
+     * }
+     *
+     * @return mixed The result of the request.
      */
-    public function getDIDs(): mixed
+    public function getDIDs(array $params = []): mixed
     {
-        $response = $this->submitRequest('dids_get');
-        return $response;
+        return $this->submitRequest('dids_get');
     }
 }
