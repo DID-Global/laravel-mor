@@ -5,8 +5,6 @@ namespace MOR\Facades;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static string morRequest($host, $data = [], $useHash = true, $hashKeys = [], $username = null, $password = null)
- * @method static string sendRequest($data, $host = false)
  * @method static string getUserDetails($user_id)
  * @method static string getUsers()
  * @method static string getDIDs()

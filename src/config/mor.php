@@ -1,21 +1,24 @@
 <?php
 
 return [
-    // API URL
+    // API BASE URL
     'url' => 'https://mor.url.com',
 
-    // API KEY
+    // API SECRET KEY
     'secret_key' =>	'API_SECRET_KEY',
 
-    // API USERNAME
+    // API USER NAME
     'username'	=> 'admin_user',
 
-    // API PASSWORD
+    // API USER PASSWORD
     'password' => 'password123',
 
-    // API PROCESSOR
-    'processor' => 'api2016.php',
+    // API TIMEOUT
+    'timeout' => 0,
 
     // API TIMEZONE
     'timezone' => 'UTC',
+
+    // API HASH CHECKING ENABLED
+    'hash_checking' => true
 ];
