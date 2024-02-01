@@ -62,7 +62,7 @@ class MorCore
         $this->username         = config('mor.username');
         $this->password         = config('mor.password');
         $this->timezone         = config('mor.timezone');
-        $this->timeout         = config('mor.timeout');
+        $this->timeout          = config('mor.timeout');
         $this->hash_checking    = config('mor.hash_checking');
 
         $this->client = new Client([
@@ -74,7 +74,7 @@ class MorCore
     /**
      * @param string $path
      * @param array $data
-     * @param array $hashParamsKeys
+     * @param array $hashParamKeys
      * @param string|null $username
      * @param string|null $password
      * @return mixed
@@ -82,36 +82,39 @@ class MorCore
     public function submitRequest(
         string $path,
         array $data = [],
-        array $hashParamsKeys = [],
-        string $username = null,
-        string $password = null
+        array $hashParamKeys = []
     ): mixed {
-        $params = $this->buildRequestParams($data, $hashParamsKeys);
+        $params = $this->buildRequestParams($data, $hashParamKeys);
+        $headers = $this->getRequestHeaders();
 
-        $response = $this->client->post($path, [
+        $response = $this->client->post(ltrim($path, '/'), [
             'query' => $params,
-            'headers' => $this->getRequestHeaders(),
+            'headers' => $headers,
             'http_errors' => true,
             'verify' => false
         ]);
 
-        return $response->getBody();
+        $responseContent = $response->getBody()->getContents();
+
+        return $this->parseResponse($responseContent);
     }
 
     /**
      * @param array $data
-     * @param array $hashParamsKeys
+     * @param array $hashParamKeys
      * @return array
      */
-    public function buildRequestParams(array $data, array $hashParamsKeys): array
-    {
-        $params = array_merge($data, [
+    protected function buildRequestParams(
+        array $data,
+        array $hashParamKeys
+    ): array {
+        $params = array_merge([
             'u' => $this->username,
             'p' => $this->password
-        ]);
+        ], $data);
 
         if ($this->hash_checking) {
-            $params['hash'] = $this->constructRequestHash($params, $hashParamsKeys);
+            $params['hash'] = $this->constructHashParam($params, $hashParamKeys);
         }
 
         return $params;
@@ -119,26 +122,31 @@ class MorCore
 
     /**
      * @param array $params
-     * @param array $hashParamsKeys
+     * @param array $hashParamKeys
      * @return string sha1 hash
      */
-    protected function constructRequestHash(array $params, array $hashParamsKeys): string
-    {
-        $hashStringValues = array_filter(
-            $hashParamsKeys,
-            fn ($paramKey) => in_array($paramKey, array_keys($params))
-        );
+    protected function constructHashParam(
+        array $params,
+        array $hashParamKeys
+    ): string {
+        $hashParams = [];
 
-        array_push($hashStringValues, $this->api_secret_key);
+        foreach ($hashParamKeys as $paramKey) {
+            if (in_array($paramKey, array_keys($params))) {
+                array_push($hashParams, $params[$paramKey]);
+            }
+        }
 
-        return sha1(implode($hashStringValues));
+        array_push($hashParams, $this->api_secret_key);
+
+        return sha1(implode($hashParams));
     }
 
     /**
      * @param string $response
      * @return array
      */
-    protected function parseMorResponse(string $response)
+    protected function parseResponse(string $response)
     {
         return XmlToArray::convert($response);
     }
@@ -146,7 +154,7 @@ class MorCore
     /**
      * @return array
      */
-    protected function getRequestHeaders()
+    protected function getRequestHeaders(): array
     {
         return [];
     }

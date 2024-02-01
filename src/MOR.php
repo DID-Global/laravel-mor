@@ -16,7 +16,7 @@ class MOR extends MorCore
      * @param int|string $user_id
      * @return mixed
      */
-    public function getUserDetails($user_id)
+    public function getUserDetails(int|string $user_id): mixed
     {
         $params = [];
         $params[is_numeric($user_id) ? 'user_id' : 'username'] = $user_id;
@@ -28,7 +28,7 @@ class MOR extends MorCore
     /**
      * @return mixed
      */
-    public function getUsers()
+    public function getUsers(): mixed
     {
         $response = $this->submitRequest('users_get', [], ['u', 'p']);
         return $response;
@@ -37,7 +37,7 @@ class MOR extends MorCore
     /**
      * @return mixed
      */
-    public function getDIDs()
+    public function getDIDs(): mixed
     {
         $response = $this->submitRequest('dids_get');
         return $response;

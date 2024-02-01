@@ -40,6 +40,7 @@ class MORServiceProvider extends ServiceProvider
         });
 
         $configPath = config_path('mor.php');
+
         if (!\Illuminate\Support\Facades\File::exists($configPath)) {
             $this->publishes([
                 __DIR__ . '/../config/mor.php' => $configPath
