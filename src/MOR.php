@@ -13,18 +13,23 @@ class MOR extends MorCore
     }
 
     /**
-     * @param int|string $user_id
+     * Retrieve user information based on specified parameters.
+     *
+     * @param array $params {
+     *     An associative array of parameters.
+     *
+     *     @var int|null    $user_id            Search by user ID. Required if username is not used
+     *     @var string|null $username           Search by username. Required if user_id is not used.
+     * }
+     *
      * @return mixed
      */
-    public function getUserDetails(int|string $userId): mixed
+    public function getUserDetails(array $params): mixed
     {
-        $params = [];
-        $params[is_numeric($userId) ? 'user_id' : 'username'] = $userId;
-
         return $this->submitRequest(
-            'user_details',
+            'user_details_get',
             $params,
-            [is_numeric($userId) ? 'user_id' : 'username']
+            ['user_id', 'username']
         );
     }
 
@@ -42,22 +47,22 @@ class MOR extends MorCore
      * @param array $params {
      *     An associative array of parameters.
      *
-     *     @var string|null $search_did_number            Search by DID number.
-     *     @var string|null $search_did_owner             Search by DID owner.
-     *     @var string|null $search_dialplan              Search by dialplan.
-     *     @var string|null $search_user                  Search by user ID.
-     *     @var string|null $search_device                Search by device.
-     *     @var string|null $search_provider              Search by provider.
-     *     @var string|null $search_language              Search by language.
+     *     @var int|null    $search_did_number            Search by DID number.
+     *     @var int|null    $search_dialplan              Search by dialplan ID.
+     *     @var int|null    $search_user                  Search by user ID.
+     *     @var int|null    $search_device                Search by device ID.
+     *     @var int|null    $search_provider              Search by provider ID.
      *     @var int|null    $search_hide_terminated_dids  Hide terminated DIDs if '1'.
+     *     @var string|null $search_did_owner             Search by DID owner.
+     *     @var string|null $search_language              Word which is used in DIDs configuration as language.
      *     @var int|null    $max_results                  Maximum number of results to retrieve.
-     *     @var string|null $from                         Specify a starting point for the search.
+     *     @var int|null    $from                         Specify a starting point for the search.
      * }
      *
-     * @return mixed The result of the request.
+     * @return mixed
      */
     public function getDIDs(array $params = []): mixed
     {
-        return $this->submitRequest('dids_get');
+        return $this->submitRequest('dids_get', $params);
     }
 }
