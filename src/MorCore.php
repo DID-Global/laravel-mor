@@ -2,157 +2,107 @@
 
 namespace MOR;
 
-use GuzzleHttp\Client;
-use Mtownsend\XmlToArray\XmlToArray;
-
-class MorCore
+class MOR extends MorCore
 {
-    /**
-     * @var \GuzzleHttp\Client
-     */
-    protected $client;
-
-    /**
-     * @var string
-     */
-    protected $apiUrl;
-
-    /**
-     * @var string
-     */
-    protected $apiSecretKey;
-
-    /**
-     * @var string
-     */
-    protected $processor;
-
-    /**
-     * @var string
-     */
-    protected $username;
-
-    /**
-     * @var string
-     */
-    protected $password;
-
-    /**
-     * @var string
-     */
-    protected $timezone;
-
-    /**
-     * @var int
-     */
-    protected $timeout;
-
-    /**
-     * @var bool
-     */
-    protected $hashChecking;
-
     /**
      * Instantiate a new instance
      */
     public function __construct()
     {
-        $this->apiUrl          = config('mor.url');
-        $this->apiSecretKey    = config('mor.secret_key');
-        $this->username        = config('mor.username');
-        $this->password        = config('mor.password');
-        $this->timezone        = config('mor.timezone');
-        $this->timeout         = config('mor.timeout');
-        $this->hashChecking    = config('mor.hash_checking');
-
-        $this->client = new Client([
-            'base_uri'  => sprintf('%s/billing/api/', rtrim($this->apiUrl, '/')),
-            'timeout'   => $this->timeout
-        ]);
+        parent::__construct();
     }
 
     /**
-     * @param string $path
-     * @param array $data
-     * @param array $hashParamKeys
-     * @param string|null $username
-     * @param string|null $password
+     * Retrieve user information based on specified parameters.
+     *
+     * @param array $params {
+     *     An associative array of parameters.
+     *
+     *     @var int|null    $user_id            Search by user ID. Required if username is not used.
+     *     @var string|null $username           Search by username. Required if user_id is not used.
+     * }
+     *
      * @return mixed
      */
-    public function submitRequest(
-        string $path,
-        array $data = [],
-        array $hashParamKeys = [],
-        string $username = null,
-        string $password = null
-    ): mixed {
-        $params = $this->buildRequestParams($data, $hashParamKeys);
-
-        $response = $this->client->post($path, [
-            'query' => $params,
-            'headers' => $this->getRequestHeaders(),
-            'http_errors' => true,
-            'verify' => false
-        ]);
-
-        $responseContent = $response->getBody()->getContents();
-
-        return $this->parseResponse($responseContent);
+    public function getUserDetails(array $params = []): mixed
+    {
+        return $this->submitRequest(
+            'user_details_get',
+            $params,
+            ['user_id', 'username']
+        );
     }
 
     /**
-     * @param array $data
-     * @param array $hashParamKeys
-     * @return array
+     * @return mixed
      */
-    public function buildRequestParams(array $data, array $hashParamKeys): array
+    public function getUsers(): mixed
     {
-        $params = array_merge([
-            'u' => $this->username,
-            'p' => $this->password
-        ], $data);
-
-        if ($this->hashChecking) {
-            $params['hash'] = $this->constructRequestHash($params, $hashParamKeys);
-        }
-
-        return $params;
+        return $this->submitRequest('users_get', [], ['u', 'p']);
     }
 
     /**
-     * @param array $params
-     * @param array $hashParamKeys
-     * @return string sha1 hash
+     * Retrieve DIDs based on specified parameters.
+     *
+     * @param array $params {
+     *     An associative array of parameters.
+     *
+     *     @var int|null    $search_did_number            Search by DID number.
+     *     @var int|null    $search_dialplan              Search by dialplan ID.
+     *     @var int|null    $search_user                  Search by user ID.
+     *     @var int|null    $search_device                Search by device ID.
+     *     @var int|null    $search_provider              Search by provider ID.
+     *     @var int|null    $search_hide_terminated_dids  Hide terminated DIDs if '1'.
+     *     @var string|null $search_did_owner             Search by DID owner.
+     *     @var string|null $search_language              Word which is used in DIDs configuration as language.
+     *     @var int|null    $max_results                  Maximum number of results to retrieve.
+     *     @var int|null    $from                         Specify a starting point for the search.
+     * }
+     *
+     * @return mixed
      */
-    protected function constructRequestHash(array $params, array $hashParamKeys): string
+    public function getDIDs(array $params = []): mixed
     {
-        $hashParams = [];
-
-        foreach ($hashParamKeys as $paramKey) {
-            if (in_array($paramKey, array_keys($params))) {
-                array_push($hashParams, $params[$paramKey]);
-            }
-        }
-
-        array_push($hashParams, $this->apiSecretKey);
-
-        return sha1(implode($hashParams));
+        return $this->submitRequest('dids_get', $params);
     }
 
     /**
-     * @param string $response
-     * @return array
+     * Retrieve user calls based on specified parameters.
+     *
+     * @param array $params {
+     *     An associative array of parameters.
+     *
+     *     @var int|null    $period_start               Unix timestamp of calls period starting date. (Default: Today at 00:00).
+     *     @var int|null    $period_end                 Unix timestamp of calls period end date. (Default: Today at 23:59).
+     *     @var int|null    $s_reseller                 Reseller type User ID in MOR database. (Default: all).
+     *     @var int|null    $s_user                     User's ID in MOR database. Required if s_reseller is not used.
+     *     @var string|null $s_call_type                Call type. Possible values [all, answered, no answer, failed, busy]. (Default: all)
+     *     @var int|null    $s_device                   Device ID in MOR database. Possible values [all, numeric value of device_id]. (Default: all).
+     *     @var int|null    $s_provider                 Provider ID in MOR database. Possible values [all, numeric value of provider_id]. (Default: all). Only for Admin and Reseller PRO.
+     *     @var int|null    $s_hgc                      Hangup cause code ID in MOR database. Possible values [all, numeric value of hangup_cause_code_id]. (Default: all). Only for Admin and Reseller if Show HGC for Resellers is ON.
+     *     @var string|null $s_did                      Show calls made through a specific DID. Possible values [all, calls.did_id]. (Default: all). Only for Admin.
+     *     @var string|null $s_destination              Prefix.
+     *     @var string|null $order_by                   Possible values [time, src, dst, prefix, nice_billsec, hgc, server, p_name, p_rate, p_price, reseller, r_rate, r_price, user, u_rate, u_price, number, d_provider, d_inc, d_owner]. (Default: time).
+     *     @var int|null    $order_desc                 Possible values [0,1]. (Default: 0).
+     *     @var int|null    $only_did                   Show calls that only went through a DID. Possible values [0,1]. (Default: 0).
+     *     @var int|null    $s_uniqueid                 Return a specific Call by uniqueid. Date parameters are ignored in this case.
+     *     @var string|null $s_callback_uniqueid        Return Call(s) by callback uniqueid. Date parameters are ignored in this case. Only works when use_callback_uniqueid setting is enabled in mor.conf.
+     *     @var string|null $originator_codec_name      Originator codec.
+     *     @var string|null $terminator_codec_name      Terminator codec.
+     * }
+     *
+     * @return mixed
      */
-    protected function parseResponse(string $response): array
+    public function getUserCalls(array $params): mixed
     {
-        return XmlToArray::convert($response);
-    }
+        $hashParamKeys = [
+            'period_start', 'period_end', 's_user',
+            's_call_type', 's_device', 's_provider',
+            's_hgc', 's_did', 's_destination',
+            'order_by', 'order_desc', 'only_did',
+            's_uniqueid', 'originator_codec_name', 'terminator_codec_name',
+        ];
 
-    /**
-     * @return array
-     */
-    protected function getRequestHeaders(): array
-    {
-        return [];
+        return $this->submitRequest('user_calls_get', $params, $hashParamKeys);
     }
 }
